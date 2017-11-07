@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div ng-controller="loginController">
+        <center>
+            <div class="loginCadastrar" id="login">
+          <h1>Login</h1>
+          <input type="email" name="email" placeholder="email"/>
+          <input type="password" name="senha" placeholder="senha"/>
+            <button type="button">Login</button>
+        </div>
+
+        <div class="loginCadastrar" id="cadastrar">
+            <h1>Cadastrar</h1>
+            <input type="nomeCadastro" name="nomeCadastro" placeholder="Digite o seu nome" ng-model="usuario.nome"/>
+            <input type="email" name="emailCadastro" placeholder="Digite o seu Email" ng-model="usuario.email"/>
+
+            <h3 style="float:left;">Genero:</h3>
+
+            <h3>Masculino</h3>
+            <input type="radio" name="Genero" value="Masculino" ng-model="usuario.genero">
+
+            <input type="radio" name="Genero" value="Feminino" ng-model="usuario.genero">
+
+            <input type="checkbox" name="Publico" ng-model="usuario.publico">
+
+            <input type="text" name="Profissao" ng-model="usuario.profissao">
+
+            <input type="password" name="senhaCadastro" ng-model="senha">
+
+            <button name="cadastrar" type="button" ng-click="cadastrar()">Cadastrar</button>
+          <!--
+
+          <div id="esquerda">
+
+          </div>
+          -->
+
+
+        </div>
+
+        </center>
+    </div>
+
+{% endblock %}

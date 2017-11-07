@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt" ng-app="app">
+<head>
+    <meta charset="UTF-8">
+    <title>IFTeract</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0-beta.6/angular.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/controllers/loginController.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/service/usuarioService.js')}}"></script>
+
+
+</head>
+<body>
+
+    <div>
+        {% block content %}
+        {% endblock %}
+
+    </div>
+
+
+</body>
+</html>
