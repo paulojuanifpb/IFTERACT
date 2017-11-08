@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="pt" ng-app="">
+<html lang="pt" ng-app="app">
 <head>
     <meta charset="UTF-8">
     <title>IFTeract</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
 
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0-beta.6/angular.min.js"></script>
+    <script src="{{ url_for('static', filename='js/lib/angular.min.js')}}"></script>
     <script src="{{ url_for('static', filename='js/app.js')}}"></script>
     <script src="{{ url_for('static', filename='js/controllers/loginController.js')}}"></script>
     <script src="{{ url_for('static', filename='js/service/usuarioService.js')}}"></script>
@@ -17,44 +17,8 @@
 </head>
 <body>
     <div>
-        <div >
-
-        <center>
-            <div class="loginCadastrar" id="login" ng-app="">
-                <h1>Login</h1>
-                <input type="email" name="email" placeholder="email" ng-model="nome"/>
-                <h3>Hello {{nome}}</h3>
-                <input type="password" name="senha" placeholder="senha"/>
-                <button type="button">Login</button>
-            </div>
-
-        <div class="loginCadastrar" id="cadastrar">
-            <h1>Cadastrar</h1>
-            <input type="text" name="nomeCadastro" placeholder="Digite o seu nome" ng-model="nome"/>
-            <input type="email" name="emailCadastro" placeholder="Digite o seu Email" ng-model="usuario.email"/>
-
-            <h3 style="float:left;">Genero:</h3>
-
-            <h3>Masculino</h3>
-            <input type="radio" name="Genero" value="Masculino" ng-model="usuario.genero">
-
-            <input type="radio" name="Genero" value="Feminino" ng-model="usuario.genero">
-
-            <input type="checkbox" name="Publico" ng-model="usuario.publico">
-
-            <input type="text" name="Profissao" ng-model="usuario.profissao">
-
-            <input type="password" name="senhaCadastro" ng-model="senha">
-
-            <button name="cadastrar" type="button" ng-click="cadastrar()">Cadastrar</button>
-
-            <h1>NOME :{{nome}}</h1>
-
-
-        </div>
-
-        </center>
-    </div>
+        {% block content %}
+        {% endblock %}
 
 
     </div>
