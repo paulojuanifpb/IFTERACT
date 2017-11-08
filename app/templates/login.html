@@ -4,14 +4,14 @@
         <center>
             <div class="loginCadastrar" id="login">
           <h1>Login</h1>
-          <input type="email" name="email" placeholder="email"/>
-          <input type="password" name="senha" placeholder="senha"/>
-            <button type="button">Login</button>
+          <input type="email" name="email" placeholder="email" ng-model="perfil.email"/>
+          <input type="password" name="senha" placeholder="senha" ng-model="perfil.senha"/>
+            <button type="button" ng-click="logar()">Login</button>
         </div>
 
         <div class="loginCadastrar" id="cadastrar">
             <h1>Cadastrar</h1>
-            <input type="text" name="nomeCadastro" placeholder="Digite o seu nome" ng-model="nome"/>
+            <input type="text" name="nomeCadastro" placeholder="Digite o seu nome" ng-model="usuario.nome"/>
             <input type="email" name="emailCadastro" placeholder="Digite o seu Email" ng-model="usuario.email"/>
 
             <h3 style="float:left;">Genero:</h3>
@@ -25,11 +25,12 @@
 
             <input type="text" name="Profissao" ng-model="usuario.profissao">
 
-            <input type="password" name="senhaCadastro" ng-model="senha">
+            <input type="date" name="nascimento" ng-model="usuario.nascimento">
+
+            <input type="password" name="senhaCadastro" ng-model="usuario.senha">
 
             <button name="cadastrar" type="button" ng-click="cadastrar()">Cadastrar</button>
 
-            <h1>NOME :{{nome}}</h1>
 
 
         </div>
