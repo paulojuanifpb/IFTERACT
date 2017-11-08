@@ -5,7 +5,7 @@ app = Flask(__name__)
 @app.route("/")
 def login():
     print("Comeco")
-    return render_template("login.html"), 200
+    return render_template("layout.html"), 200
 
 
 

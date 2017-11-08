@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-    <div ng-controller="loginController">
+    <div ng-controller="loginCtrl">
         <center>
             <div class="loginCadastrar" id="login">
           <h1>Login</h1>
@@ -11,7 +11,7 @@
 
         <div class="loginCadastrar" id="cadastrar">
             <h1>Cadastrar</h1>
-            <input type="nomeCadastro" name="nomeCadastro" placeholder="Digite o seu nome" ng-model="usuario.nome"/>
+            <input type="text" name="nomeCadastro" placeholder="Digite o seu nome" ng-model="nome"/>
             <input type="email" name="emailCadastro" placeholder="Digite o seu Email" ng-model="usuario.email"/>
 
             <h3 style="float:left;">Genero:</h3>
@@ -28,12 +28,8 @@
             <input type="password" name="senhaCadastro" ng-model="senha">
 
             <button name="cadastrar" type="button" ng-click="cadastrar()">Cadastrar</button>
-          <!--
 
-          <div id="esquerda">
-
-          </div>
-          -->
+            <h1>NOME :{{nome}}</h1>
 
 
         </div>

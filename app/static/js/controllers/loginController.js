@@ -1,8 +1,10 @@
-app.controller("loginController", function($scope, usuarioService){
+app.controller('loginCtrl', function($scope, usuarioService){
 
     $scope.usuario;
+    console.log("CHEGOUUU");
 
-    var cadastrar = function(){
+    $scope.oi ="oi";
+    $scope.cadastrar = function(){
 
         var user = $scope.usuario;
 
