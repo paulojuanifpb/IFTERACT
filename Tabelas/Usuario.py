@@ -1,15 +1,17 @@
 import sqlite3
 
 # CONEXÃO
-conn = sqlite3.connect(' ifteract.db ')
+conn = sqlite3.connect(' NADA.db ')
 
 # criação do cursor
 cursor = conn.cursor()
 
-try:# criação das tabelas do banco
+def criarTabela(conn):
+    cursor = conn.cursor()
+
     cursor.execute("""
             CREATE TABLE tb_Usuario (
-                id int auto_increment primary key,
+                id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                 nome VARCHAR(70) NOT NULL,
                 email VARCHAR(50) NOT NULL,
                 nascimento DATE,
@@ -20,8 +22,6 @@ try:# criação das tabelas do banco
              );
         
         """)
-except:
-    print("Banco de Dandos Já Existe")
 
 
 
@@ -35,11 +35,12 @@ class Usuario():
         self.publico = publico
         self.senha = senha
 
-    def inserir(self, usuario):
+    def inserir(self, usuario, conn):
 
+        cursor = conn.cursor()
         cursor.execute("""
-            insert into tb_Usuario values(?,?,?,?,?,?,?,?)
-            """,(1,usuario.nome,usuario.email,usuario.nascimento,usuario.profissao,usuario.genero,usuario.publico,usuario.senha))
+            insert into tb_Usuario(nome,email,nascimento,profissao,genero,publico,senha) values(?,?,?,?,?,?,?)
+            """,(usuario.nome,usuario.email,usuario.nascimento,usuario.profissao,usuario.genero,usuario.publico,usuario.senha))
         conn.commit()
 
     def listar(self):
@@ -81,6 +82,23 @@ class Usuario():
              delete from tb_Usuario
              where id = ?
              """,(id,))
+
+    def solicitarAmizade(self,idEmissor, nome, conn):
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            select id from tb_Usuario where nome = ?
+        """,(nome,))
+
+        idR = cursor.fetchone()[0]
+
+        cursor.execute("""
+            insert into tb_Notificacao(texto, emissor,receptor)
+            Values(?, ?, ?);
+        """,("Solicitacao de Amizade",idEmissor, idR))
+
+        conn.commit()
+
 
 
 
