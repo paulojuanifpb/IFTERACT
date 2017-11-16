@@ -1,12 +1,12 @@
 import sqlite3
 import datetime
-from Tabelas import Usuario
-from Tabelas import Post
-from Tabelas import Grupo
-from Tabelas import Mensagem
-from Tabelas import Notificação
-from Tabelas import RedeSocial
-from Tabelas import Sistema
+from Model import Usuario
+from Model import Post
+from Model import Grupo
+from Model import Mensagem
+from Model import Notificação
+from Model import RedeSocial
+from Model import Sistema
 
 
 # CONEXÃO
@@ -19,11 +19,15 @@ def cadastrar(conn):
     print('CADASTRANDO USUARIO')
     nome = input('Digite o Nome:\n')
     email = input('Digite o Email:\n')
-    dia = int(input('Digite o Dia:\n'))
-    mes = int(input('Digite o Mes:\n'))
-    ano = int(input('Digite o Ano:\n'))
-    nascimento =  datetime.date(ano,mes,dia)
-    profissao = input('Digite a profissao:\n')
+    try:
+        dia = int(input('Digite o Dia:\n'))
+        mes = int(input('Digite o Mes:\n'))
+        ano = int(input('Digite o Ano:\n'))
+        nascimento =  datetime.date(ano,mes,dia)
+        profissao = input('Digite a profissao:\n')
+
+    except ValueError:
+        print("Valor para data inválido")
     genero = input('Digite o Genero:\n')
     publico = False
     senha = input('Digite a Senha:\n')
@@ -154,12 +158,16 @@ def exibirGrupo():
     for linha in cursor.fetchall():
         print(linha)
 
-
+#Funcao de Logar
 def logar(conn):
+    #Criacao do cursor da conexao(Banco de Dados - SQLite3)
     cursor = conn.cursor()
+
+    #Pedindo Dados
     email = input("Digite o seu email:\n ")
     senha = input("Digite sua senha:\n ")
 
+    #Comando Sql de Consulta(Select
     cursor.execute("""
         Select * From tb_Usuario where email = ? and senha = ?;
     """, (email, senha))
@@ -171,18 +179,82 @@ def logar(conn):
     else:
         return (True, user)
 
+#Funcao de BUscar Notificacoes no BD
 def BuscarNotificacoes(idUser,conn):
 
+    #Criacao do cursor pra manipulcao apartir de conn(BD da rede)
     cursor = conn.cursor()
 
+    #Contador de Notificacoes
+    contador = 0
 
-
+    #Comando Sql de consulta(Select)
     cursor.execute("""
-        Select * from tb_Notificacao where receptor = ?;
+        Select texto,confirmar,emissor,tb_Usuario.email from tb_Notificacao, tb_Usuario
+         where receptor = ? and tb_Usuario.id = tb_Notificacao.emissor ;
     """,(idUser,))
 
+    #TEsxo a ser reotornado
+    texto = ""
     for linha in cursor.fetchall():
-        print(linha)
+        texto = texto + "\n"+ str(linha)
+        contador +=1
+
+    #Se não houver Notificacoes enviar ess mensagem de return
+    if (texto == ""):
+        texto = "Não há nenhuma notificacao:"
+
+    return (contador, texto)
+
+
+#Funcao de Buscar todas As Mensagens
+def buscarMensagem(idUser,conn):
+
+     #Criacao do cursor pra manipulcao apartir de conn(BD da rede)
+    cursor = conn.cursor()
+
+    contador = 0
+    cursor.execute("""
+        Select texto,emissor,tb_Usuario.email from tb_Mensagem, tb_Usuario
+         where receptor = ? and tb_Usuario.id = tb_Mensagem.emissor;
+    """,(idUser,))
+
+    texto = ""
+    for linha in cursor.fetchall():
+        texto = texto + "\n"+ str(linha)
+        contador +=1
+
+    if (texto == ""):
+        texto = "Não há nenhuma mensgem"
+
+    return (contador, texto)
+
+def enviarMensagem(usuario,idUsuario, conn):
+    try:
+        email = input("Digite o email do outro usuario\n")
+
+
+        cursor = conn.cursor()
+        cursor.execute("""
+            select id from tb_Usuario where email = ?
+        """,(email,))
+
+        idR = cursor.fetchone()[0]
+
+        cursor.execute("""
+            Select confirmar from tb_Notificacao where emissor = ? and receptor = ?;
+        """,(idR, idUsuario))
+
+        confirmacao = cursor.fetchone()[0]
+
+        if (confirmacao == "true"):
+            texto = input("Digite a sua mensagem\n")
+            usuario.enviarMensagem(texto,idUsuario, idR, conn)
+
+        else:
+            print("Amigo Nao encontrado")
+    except TypeError:
+        print("Email não encontrado")
 
 
 
@@ -190,122 +262,146 @@ def BuscarNotificacoes(idUser,conn):
 
 def main():
 
+    sair = False
     conn = sqlite3.connect("sistema.db")
     cursor = conn.cursor()
 
     while (True):
-        escolha  = int(input("Digite:\n 1 - Criar Rede Social\n 2 - Entrar na Sua rede Social"))
+        try:
+            escolha  = int(input("Digite:\n 1 - Criar Rede Social\n 2 - Entrar na Sua rede Social\n"))
 
-        if(escolha == 1):
-            nome = input("\n\nDigite o nome da sua Rede Social:\n")
+            if(escolha == 1):
+                nome = input("\n\nDigite o nome da sua Rede Social:\n")
 
-            #ADICIONANDO AO BD SISTEMA TB REDES
-            Sistema.adicionarRede(nome,conn)
+                #ADICIONANDO AO BD SISTEMA TB REDES
+                Sistema.adicionarRede(nome,conn)
 
-            #INSTANCIANDO O OBJETO DA REDE SOCIAL
-            rede = RedeSocial.RedeSocial(nome,datetime.date.today())
+                #INSTANCIANDO O OBJETO DA REDE SOCIAL
+                rede = RedeSocial.RedeSocial(nome,datetime.date.today())
 
-            #CRIANDO BANCO DE DADOS DA REDE
-            conn = rede.CriarBanco(nome)
+                #CRIANDO BANCO DE DADOS DA REDE
+                conn = rede.CriarBanco(nome)
 
-            #CRIANDO ALGUMA TABELAS DA REDE SOCIAL
-            Grupo.criarTabela(conn)
-            Notificação.criarTabela(conn)
-            Mensagem.criarTabela(conn)
-            Post.criarTabela(conn)
-            Usuario.criarTabela(conn)
-            conn.commit()
-            break
+                #CRIANDO ALGUMA TABELAS DA REDE SOCIAL
+                Grupo.criarTabela(conn)
+                Notificação.criarTabela(conn)
+                Mensagem.criarTabela(conn)
+                Post.criarTabela(conn)
+                Usuario.criarTabela(conn)
+                conn.commit()
+                break
 
-        elif(escolha == 2):
-            nome = input("Digite o Nome da Sua Rede Social:\n")
+            elif(escolha == 2):
+                nome = input("Digite o Nome da Sua Rede Social:\n")
 
-            cursor.execute("""
-            Select * From tb_redes; 
-            """)
+                cursor.execute("""
+                Select * From tb_redes; 
+                """)
 
-            for linha in cursor.fetchall():
-                print(linha)
+                for linha in cursor.fetchall():
+                    print(linha)
 
-            nomeDB = nome + ".db"
-            conn = sqlite3.connect(nomeDB)
-            break
+                nomeDB = nome + ".db"
+                conn = sqlite3.connect(nomeDB)
 
-        else:
-            print("OPCAO INVALID")
+                break
+
+            else:
+                print("OPCAO INVALID")
+        except ValueError:
+            print("Digite um NUMERO que correspond a sua vontade:\n")
 
 
     logou = False
-    while(logou != True):
+    while(logou != True and sair == False):
+        try:
+            escolha = int(input("Digite o numero correspondente a opção:\n 1-Cadastrar-se\n 2-Logar\n 3-Sair"))
 
-        escolha = int(input("Digite o numero correspondente a opção:\n 1-Cadastrar-se\n 2-Logar"))
+            if(escolha == 1):
+                cadastrar(conn)
+                exibirUsuario(conn)
 
-        if(escolha == 1):
-            cadastrar(conn)
-            exibirUsuario(conn)
-
-        elif(escolha == 2):
-            respostas = logar(conn)
-            logou = respostas[0]
-
-    print("!--HOME--!")
-    usuario = respostas[1]
-    idUsuario = usuario[0]
-    nome = usuario[1]
-    email = usuario[2]
-    nascimento = usuario[3]
-    profissao = usuario[4]
-    genero = usuario[5]
-    publico = usuario[6]
-    senha = usuario[7]
-
-    usuario = Usuario.Usuario(nome, email, nascimento, profissao, genero, publico, senha)
-    while(logou):
-
-        escolha = int(input("Digite o numero correspondente a opção:\n 1-Solicitar Amizade\n 6-notificacoes\n 7-aceitarSolicitacao"))
-
-        if(escolha == 1):
-            nome = input("Digite o nome do outro usuario")
-            usuario.solicitarAmizade(idUsuario, nome,conn)
-
-        elif(escolha == 2):
-
-            nome = input("Digite o nome do outro usuario")
+            elif(escolha == 2):
+                respostas = logar(conn)
+                logou = respostas[0]
 
 
-            cursor = conn.cursor()
-            cursor.execute("""
-            select id from tb_Usuario where nome = ?
-            """,(nome,))
+            elif(escolha == 3):
+                print("Bye")
+                sair = True
 
-            idR = cursor.fetchone()[0]
 
-            cursor.execute("""
-            Select confirmar from tb_Notificacao where emissor = ? and receptor = ?;
-            """,(idR, idUsuario))
+            if(logou):
+                print("!--HOME--!")
+                usuario = respostas[1]
+                idUsuario = usuario[0]
+                nome = usuario[1]
+                email = usuario[2]
+                nascimento = usuario[3]
+                profissao = usuario[4]
+                genero = usuario[5]
+                publico = usuario[6]
+                senha = usuario[7]
 
-            confirmacao = cursor.fetchone()[0]
+                usuario = Usuario.Usuario(nome, email, nascimento, profissao, genero, publico, senha)
+                while(logou and sair == False):
+                    try:
 
-            if (confirmacao == "true"):
-                input("TEXTO DA MENSAGEM")
+                    #Verificando se a Notificaoes(Solicitacoes)
 
-            else:
-                print("Amigo Nao encontrado")
+                        quantidadeNotificacoes = BuscarNotificacoes(idUsuario, conn)[0]
+                        if(quantidadeNotificacoes > 0):
+                            print("\n---VocÊ tem %s solicitacoes" %quantidadeNotificacoes)
 
-        elif(escolha == 6):
-            BuscarNotificacoes(idUsuario,conn)
+                    #Verificando se a mensagens
 
-        elif(escolha == 7):
-            idSolic = int(input("DIgite o id da solicitacao"))
-            cursor = conn.cursor()
+                        quantidadeMensagem = buscarMensagem(idUsuario, conn)[0]
+                        if(buscarMensagem(idUsuario, conn)):
+                            print("\n---VocÊ tem %s Mensagens" %quantidadeMensagem)
 
-            cursor.execute("""
-                update tb_Notificacao
-                set confirmar = 'true', visualizado = 'true'
-                where id = ?;
-            """,(idSolic,))
+                    #Selecionando a opcao deseja e verificando a resposta
+                        escolha = int(input("\nDigite o numero correspondente a opção:\n 1-Solicitar Amizade\n 2-Enviar Mensagem \n 3-Listar Usuarios\n 5-Mostrar Mensagens\n 6-notificacoes\n 7-aceitar Solicitacao\n 8-Sair\n"))
 
-            conn.commit()
+                    #Solicitar Amizade
+                        if(escolha == 1):
+                            email = input("Digite o email do outro usuario")
+                            usuario.solicitarAmizade(idUsuario, email,conn)
+
+                    #Enviar Mensagem
+                        elif(escolha == 2):
+                            enviarMensagem(usuario,idUsuario,conn)
+
+                    #Listar Usuarios
+                        elif(escolha == 3):
+                            usuarios = usuario.listar(conn)
+
+                            for usuario in usuarios:
+                                print("Nome: " + usuario.nome + " Email: " + usuario.email)
+
+                    #Mostrar Mensagens
+                        elif(escolha == 5):
+                            print(buscarMensagem(idUsuario, conn)[1])
+
+                    #Mostrar Notificacoes
+                        elif(escolha == 6):
+                            print(BuscarNotificacoes(idUsuario,conn)[1])
+
+
+
+                    #Aceitar Solicitacao de Amizade
+                        elif(escolha == 7):
+                            usuario.aceitarSolicitacao(idUsuario,conn)
+
+                    #Sair - LogOut
+                        if(escolha == 8):
+                            logou = False
+
+                    except ValueError:
+                        print("\n!!!!!Digite um NUMERO correspondente com a opcao!!!!!\n")
+
+
+        except ValueError:
+            print("\n!!!!Digit um NUMERO correspondente!!!!\n")
 
 
 if __name__ == '__main__':
