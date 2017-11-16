@@ -13,7 +13,7 @@ def criarTabela(conn):
             CREATE TABLE tb_Usuario (
                 id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                 nome VARCHAR(70) NOT NULL,
-                email VARCHAR(50) NOT NULL,
+                email VARCHAR(50) NOT NULL UNIQUE,
                 nascimento DATE,
                 profissao VARCHAR(50),
                 genero VARCHAR(10),
@@ -37,15 +37,21 @@ class Usuario():
 
     def inserir(self, usuario, conn):
 
-        cursor = conn.cursor()
-        cursor.execute("""
-            insert into tb_Usuario(nome,email,nascimento,profissao,genero,publico,senha) values(?,?,?,?,?,?,?)
-            """,(usuario.nome,usuario.email,usuario.nascimento,usuario.profissao,usuario.genero,usuario.publico,usuario.senha))
-        conn.commit()
+        try:
 
-    def listar(self):
+            cursor = conn.cursor()
+            cursor.execute("""
+                insert into tb_Usuario(nome,email,nascimento,profissao,genero,publico,senha) values(?,?,?,?,?,?,?)
+                """,(usuario.nome,usuario.email,usuario.nascimento,usuario.profissao,usuario.genero,usuario.publico,usuario.senha))
+            conn.commit()
+        except sqlite3.IntegrityError:
+            print("Ese Endereco de email ja está sendo usado em outra conta")
+
+    def listar(self,conn):
 
         usuarios = []
+
+        cursor = conn.cursor()
         cursor.execute("""
             Select * From tb_Usuario;
             """)
@@ -83,23 +89,55 @@ class Usuario():
              where id = ?
              """,(id,))
 
-    def solicitarAmizade(self,idEmissor, nome, conn):
+    def solicitarAmizade(self,idEmissor, email, conn):
         cursor = conn.cursor()
 
-        cursor.execute("""
-            select id from tb_Usuario where nome = ?
-        """,(nome,))
+        try:
+            cursor.execute("""
+                select id from tb_Usuario where email = ?
+            """,(email,))
 
-        idR = cursor.fetchone()[0]
+            idR = cursor.fetchone()[0]
 
+            cursor.execute("""
+                insert into tb_Notificacao(texto, emissor,receptor)
+                Values(?, ?, ?);
+            """,("Solicitacao de Amizade",idEmissor, idR))
+
+            conn.commit()
+
+        except TypeError:
+            print("Nao  foi encontrado ninguem com esse email")
+
+
+    def enviarMensagem(self, texto, idEmissor, idReceptor,conn):
+
+        cursor = conn.cursor()
         cursor.execute("""
-            insert into tb_Notificacao(texto, emissor,receptor)
-            Values(?, ?, ?);
-        """,("Solicitacao de Amizade",idEmissor, idR))
+        Insert into tb_Mensagem(texto, emissor, receptor)
+        Values(?,?,?);
+        """,(texto, idEmissor, idReceptor))
 
         conn.commit()
 
+    def aceitarSolicitacao(self, idUsuario, conn):
+        email = input("DIgite o email do usuario que fez a solicitacao")
+        cursor = conn.cursor()
 
+        cursor.execute("""
+            Select id from tb_Usuario where email = ?
+        """,(email,))
+
+        idEmissor = cursor.fetchone()[0]
+        print(idEmissor)
+
+        cursor.execute("""
+            update tb_Notificacao
+            set confirmar = 'true', visualizado = 'true' where emissor = ? and receptor = ?;
+                            
+         """,(idEmissor, idUsuario))
+
+        conn.commit()
 
 
 def listarUsuarios():

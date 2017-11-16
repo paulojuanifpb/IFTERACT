@@ -1,10 +1,6 @@
 import sqlite3
 
 # CONEXÃO
-conn = sqlite3.connect(' NADA.db ')
-
-# criação do cursor
-cursor = conn.cursor()
 
 # criação das tabelas do banco
 def criarTabela(conn):
