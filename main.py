@@ -4,7 +4,7 @@ from Model import Usuario
 from Model import Post
 from Model import Grupo
 from Model import Mensagem
-from Model import Notificação
+from Model import Notificacao
 from Model import RedeSocial
 from Model import Sistema
 

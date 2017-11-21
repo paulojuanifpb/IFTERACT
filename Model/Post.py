@@ -8,7 +8,7 @@ cursor = conn.cursor()
 
 # criação das tabelas do banco
 
-def criarTabela(conn):
+def criarTabelaPost(conn):
 
     cursor = conn.cursor()
     cursor.execute("""

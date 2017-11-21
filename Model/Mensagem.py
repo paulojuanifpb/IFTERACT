@@ -3,7 +3,7 @@ import sqlite3
 # CONEXÃO
 
 # criação das tabelas do banco
-def criarTabela(conn):
+def criarTabelaMensagem(conn):
 
     cursor = conn.cursor()
     cursor.execute("""

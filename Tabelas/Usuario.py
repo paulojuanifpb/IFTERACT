@@ -1,19 +1,17 @@
 import sqlite3
 
 # CONEXÃO
-conn = sqlite3.connect(' NADA.db ')
+conn = sqlite3.connect(' ifteract.db ')
 
 # criação do cursor
 cursor = conn.cursor()
 
-def criarTabelaUsuario(conn):
-    cursor = conn.cursor()
-
+try:# criação das tabelas do banco
     cursor.execute("""
             CREATE TABLE tb_Usuario (
-                id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                id int auto_increment primary key,
                 nome VARCHAR(70) NOT NULL,
-                email VARCHAR(50) NOT NULL UNIQUE,
+                email VARCHAR(50) NOT NULL,
                 nascimento DATE,
                 profissao VARCHAR(50),
                 genero VARCHAR(10),
@@ -22,6 +20,8 @@ def criarTabelaUsuario(conn):
              );
         
         """)
+except:
+    print("Banco de Dandos Já Existe")
 
 
 
@@ -35,23 +35,16 @@ class Usuario():
         self.publico = publico
         self.senha = senha
 
-    def inserir(self, usuario, conn):
+    def inserir(self, usuario):
 
-        try:
+        cursor.execute("""
+            insert into tb_Usuario values(?,?,?,?,?,?,?,?)
+            """,(1,usuario.nome,usuario.email,usuario.nascimento,usuario.profissao,usuario.genero,usuario.publico,usuario.senha))
+        conn.commit()
 
-            cursor = conn.cursor()
-            cursor.execute("""
-                insert into tb_Usuario(nome,email,nascimento,profissao,genero,publico,senha) values(?,?,?,?,?,?,?)
-                """,(usuario.nome,usuario.email,usuario.nascimento,usuario.profissao,usuario.genero,usuario.publico,usuario.senha))
-            conn.commit()
-        except sqlite3.IntegrityError:
-            print("Ese Endereco de email ja está sendo usado em outra conta")
-
-    def listar(self,conn):
+    def listar(self):
 
         usuarios = []
-
-        cursor = conn.cursor()
         cursor.execute("""
             Select * From tb_Usuario;
             """)
@@ -89,55 +82,6 @@ class Usuario():
              where id = ?
              """,(id,))
 
-    def solicitarAmizade(self,idEmissor, email, conn):
-        cursor = conn.cursor()
-
-        try:
-            cursor.execute("""
-                select id from tb_Usuario where email = ?
-            """,(email,))
-
-            idR = cursor.fetchone()[0]
-
-            cursor.execute("""
-                insert into tb_Notificacao(texto, emissor,receptor)
-                Values(?, ?, ?);
-            """,("Solicitacao de Amizade",idEmissor, idR))
-
-            conn.commit()
-
-        except TypeError:
-            print("Nao  foi encontrado ninguem com esse email")
-
-
-    def enviarMensagem(self, texto, idEmissor, idReceptor,conn):
-
-        cursor = conn.cursor()
-        cursor.execute("""
-        Insert into tb_Mensagem(texto, emissor, receptor)
-        Values(?,?,?);
-        """,(texto, idEmissor, idReceptor))
-
-        conn.commit()
-
-    def aceitarSolicitacao(self, idUsuario, conn):
-        email = input("DIgite o email do usuario que fez a solicitacao")
-        cursor = conn.cursor()
-
-        cursor.execute("""
-            Select id from tb_Usuario where email = ?
-        """,(email,))
-
-        idEmissor = cursor.fetchone()[0]
-        print(idEmissor)
-
-        cursor.execute("""
-            update tb_Notificacao
-            set confirmar = 'true', visualizado = 'true' where emissor = ? and receptor = ?;
-                            
-         """,(idEmissor, idUsuario))
-
-        conn.commit()
 
 
 def listarUsuarios():

@@ -1,8 +1,8 @@
 import sqlite3
 
 
-def criarTabela(conn):
-    cursor = conn.cursor()
+def criarTabelaGrupo(conn):
+    cursor = conn.cursorGrupo()
 
 
 

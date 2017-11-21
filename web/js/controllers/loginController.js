@@ -24,9 +24,7 @@ app.controller('loginCtrl', function($scope, $state, usuarioService){
 
 
         usuarioService.logar(perfil);
-        console.log(usuarioService.home());
-        $state.transitionTo("home", {reload: true});
-        location.reload();
+        $state.go("home");
 
     };
 

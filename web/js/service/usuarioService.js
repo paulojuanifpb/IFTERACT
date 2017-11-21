@@ -11,15 +11,10 @@ app.factory("usuarioService", function($http){
         $http.post(_path + "/logar", perfil)
     }
 
-    var _home = function(){
-        $http.get(_path + "/home")
-
-    }
 
     return{
         cadastrar: _cadastrar,
-        logar: _logar,
-        home: _home
+        logar: _logar
     };
 
 });
