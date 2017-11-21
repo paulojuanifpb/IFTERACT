@@ -14,6 +14,7 @@
     <script src="js/controllers/loginController.js"></script>
     <script src="js/service/usuarioService.js"></script>
     <script src="js/router/state.js"></script>
+    <script src="js/config/valuesConfig.js"></script>
 
 
 
@@ -26,7 +27,7 @@
           <h1>Login</h1>
           <input type="email" name="email" placeholder="email" ng-model="perfil.email"/>
           <input type="password" name="senha" placeholder="senha" ng-model="perfil.senha"/>
-            <button type="button" ng-click="logar()">Login</button>
+            <button type="button" ng-click="logar(perfil)">Login</button>
         </div>
 
         <div class="loginCadastrar" id="cadastrar">
@@ -56,7 +57,7 @@
         </div>
 
         </center>
-    </div>
+    </div ui-view flex>
 
 
     </div>

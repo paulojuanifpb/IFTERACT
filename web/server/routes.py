@@ -1,27 +1,31 @@
 from flask import Flask,  render_template, request
+from flask_cors import CORS
 from Tabelas.Usuario import *
 import sqlite3
 import datetime
-from Model import Usuario, criarTabela
-from Model import Post, criarTabela
-from Model import Grupo, criarTabela
-from Model import Mensagem, criarTabela
-from Model import Notificação, criarTabela
-from Model import RedeSocial, criarTabela
-from Model import Sistema, criarTabela
+from Model.Usuario import Usuario, criarTabelaUsuario
+from Model.Post import Post, criarTabelaPost
+from Model.Grupo import Grupo, criarTabelaGrupo
+from Model.Mensagem import Mensagem, criarTabelaMensagem
+from Model.Notificacao import Notificacao, criarTabelaNotificacao
+from Model.RedeSocial import RedeSocial
+from Model import Sistema
+import main
+
 
 app = Flask(__name__)
 
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
+
 
 def main():
-
     conn = sqlite3.connect("ifteract.db")
     try:
-        Grupo.criarTabela(conn)
-        Notificação.criarTabela(conn)
-        Mensagem.criarTabela(conn)
-        Post.criarTabela(conn)
-        Usuario.criarTabela(conn)
+        criarTabelaGrupo(conn)
+        criarTabelaNotificacao(conn)
+        criarTabelaMensagem(conn)
+        criarTabelaUsuario(conn)
+        criarTabelaPost(conn)
         conn.commit()
     except:
         print ("Tabela Ja foi Criada")
@@ -31,6 +35,7 @@ def logar():
     user = request.json
     usuarios = listarUsuarios()
     perfilEncontrado = False
+
     for usuario in usuarios:
         if (usuario.email == user["email"]):
             if(usuario.senha == user["senha"]):
@@ -38,7 +43,7 @@ def logar():
 
     if (perfilEncontrado):
         print(usuario)
-        return render_template("home.html"), 200
+        return "UAU", 200
 
     else:
         return "ERROO", 200

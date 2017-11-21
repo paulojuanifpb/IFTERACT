@@ -1,7 +1,6 @@
 app.config(function ($stateProvider, $urlRouterProvider) {
 
     // Rota padrão.
-    $urlRouterProvider.otherwise("/");
 
     // Estados
     $stateProvider

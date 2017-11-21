@@ -16,15 +16,14 @@ app.controller('loginCtrl', function($scope, $state, usuarioService){
 
     };
 
-    $scope.logar = function(){
+    $scope.logar = function(perfil){
 
-        console.log("Logou");
-
-        var perfil = $scope.perfil;
+        console.log(perfil);
 
 
         usuarioService.logar(perfil);
-        $state.go("home");
+        $state.go("home")
+
 
     };
 
