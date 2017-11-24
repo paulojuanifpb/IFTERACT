@@ -1,39 +1,48 @@
 from flask import Flask,  render_template, request
 from flask_cors import CORS
-from Tabelas.Usuario import *
 import sqlite3
+import json
 import datetime
-from Model.Usuario import Usuario, criarTabelaUsuario
+from Model.Usuario import Usuario, criarTabelaUsuario, listarUsuarios
 from Model.Post import Post, criarTabelaPost
 from Model.Grupo import Grupo, criarTabelaGrupo
 from Model.Mensagem import Mensagem, criarTabelaMensagem
 from Model.Notificacao import Notificacao, criarTabelaNotificacao
 from Model.RedeSocial import RedeSocial
 from Model import Sistema
-import main
 
 
 app = Flask(__name__)
 
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
+conn = sqlite3.connect("ifteract.db")
+
+def default_parser(obj):
+    if getattr(obj, "__dict__", None):
+        return obj.__dict__
+    elif type(obj) == datetime:
+        return obj.isoformat()
+    else:
+        return str(obj)
+
 
 def main():
-    conn = sqlite3.connect("ifteract.db")
     try:
+        print("Esta Criando As Tabelas")
         criarTabelaGrupo(conn)
         criarTabelaNotificacao(conn)
         criarTabelaMensagem(conn)
         criarTabelaUsuario(conn)
         criarTabelaPost(conn)
-        conn.commit()
+        print("Ele criou a tabelas")
     except:
         print ("Tabela Ja foi Criada")
 
 @app.route("/logar", methods=["POST"])
 def logar():
     user = request.json
-    usuarios = listarUsuarios()
+    usuarios = listarUsuarios(conn)
     perfilEncontrado = False
 
     for usuario in usuarios:
@@ -41,9 +50,9 @@ def logar():
             if(usuario.senha == user["senha"]):
                 perfilEncontrado = True
 
-    if (perfilEncontrado):
-        print(usuario)
-        return "UAU", 200
+                userJSON = json.dumps(usuario, default=default_parser)
+                print(userJSON)
+                return (json.dumps(usuario, default=default_parser), 200)
 
     else:
         return "ERROO", 200

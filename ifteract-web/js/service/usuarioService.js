@@ -8,7 +8,9 @@ app.factory("usuarioService", function($http, config){
     }
 
     var _logar = function(perfil){
+        
         $http.post(_path + "logar", perfil)
+            
     }
 
     return{

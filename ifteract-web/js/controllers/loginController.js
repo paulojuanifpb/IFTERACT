@@ -19,11 +19,18 @@ app.controller('loginCtrl', function($scope, $state, usuarioService){
     $scope.logar = function(perfil){
 
         console.log(perfil);
+        
+        var requisicao = usuarioService.logar(perfil);
+        requisicao.then(function(response){
 
-
-        usuarioService.logar(perfil);
-        $state.go("home")
-
+            console.log("cheguei");
+            var dados = response.data;
+            console.log(dados);
+        });
+        
+        return requisicao;
+        //$state.transitionTo("home");
+        //location.reload();
 
     };
 

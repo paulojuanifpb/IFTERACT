@@ -1,12 +1,12 @@
 import sqlite3
 import datetime
-from Model import Usuario
-from Model import Post
-from Model import Grupo
-from Model import Mensagem
-from Model import Notificacao
-from Model import RedeSocial
-from Model import Sistema
+from ifteractApi.Model import Usuario
+from ifteractApi.Model import Post
+from ifteractApi.Model import Grupo
+from ifteractApi.Model import Mensagem
+from ifteractApi.Model import Notificacao
+from ifteractApi.Model import RedeSocial
+from ifteractApi.Model import Sistema
 
 
 # CONEXÃO

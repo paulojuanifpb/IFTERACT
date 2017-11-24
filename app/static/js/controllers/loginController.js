@@ -22,11 +22,20 @@ app.controller('loginCtrl', function($scope, $state, usuarioService){
 
         var perfil = $scope.perfil;
 
-
+        console.log("TESTANDO SO CAMAANDO A FUNCAO");
         usuarioService.logar(perfil);
-        console.log(usuarioService.home());
+
+        console.log("TESTANDO SO CAMAANDO A FUNCAO COM CONSOLE");
+        console.log(usuarioService.logar(perfil));
+
+        console.log("TESTANDO SO CAMAANDO A COM CONSOLE BUSCAR");
+        console.log(usuarioService.buscarPerfil());
+
+        var user = usuarioService.buscarPerfil();
+        console.log("TESTANDO SO CAMAANDO A VARIAVEL")
+        console.log(user);
         $state.transitionTo("home", {reload: true});
-        location.reload();
+        //location.reload();
 
     };
 

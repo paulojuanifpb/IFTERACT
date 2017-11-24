@@ -7,6 +7,6 @@ app.config(function ($stateProvider, $urlRouterProvider) {
         .state("home", {
             url:"/home",
             controller: "homeCtrl",
-            templateUrl: "home.html"
+            templateUrl: "view/home.html"
         })
 });

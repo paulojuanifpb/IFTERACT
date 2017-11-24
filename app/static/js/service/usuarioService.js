@@ -8,7 +8,12 @@ app.factory("usuarioService", function($http){
     }
 
     var _logar = function(perfil){
-        $http.post(_path + "/logar", perfil)
+
+        var dados;
+        $http.post(_path + "/logar", perfil).then(function(response){
+            dados = response.data;
+        })
+        return dados;
     }
 
     var _home = function(){
@@ -16,10 +21,15 @@ app.factory("usuarioService", function($http){
 
     }
 
+    var _buscarPerfil = function(){
+        $http.get(_path + "/inf")
+    }
+
     return{
         cadastrar: _cadastrar,
         logar: _logar,
-        home: _home
+        home: _home,
+        buscarPerfil: _buscarPerfil
     };
 
 });
