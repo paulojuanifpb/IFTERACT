@@ -32,26 +32,36 @@
 
         <div class="loginCadastrar" id="cadastrar">
             <h1>Cadastrar</h1>
-            <input type="text" name="nomeCadastro" placeholder="Digite o seu nome" ng-model="usuario.nome"/>
-            <input type="email" name="emailCadastro" placeholder="Digite o seu Email" ng-model="usuario.email"/>
+            <input type="text" class="NomeEmailC" name="nomeCadastro" placeholder="Digite o seu nome" ng-model="usuario.nome"/>
+            <input type="email" class="NomeEmailC" name="emailCadastro" placeholder="Digite o seu Email" ng-model="usuario.email"/>
 
-            <h3 style="float:left;">Genero:</h3>
+            <h3>Genero:</h3>
 
             <h3>Masculino</h3>
             <input type="radio" name="Genero" value="Masculino" ng-model="usuario.genero">
-
+            
+            <h3>Feminino</h3>
             <input type="radio" name="Genero" value="Feminino" ng-model="usuario.genero">
 
+            <h3>Publico</h3>
             <input type="checkbox" name="Publico" ng-model="usuario.publico">
 
-            <input type="text" name="Profissao" ng-model="usuario.profissao">
-
+            <h3 id="profissaoH">Profissao</h3>
+            <input type="text" name="Profissao" ng-model="usuario.profissao" placeholder="Profissao">
+            
+            <h2 id="NascimentoC">Nascimento</h2>
             <input type="date" name="nascimento" ng-model="usuario.nascimento">
-
-            <input type="password" name="senhaCadastro" ng-model="usuario.senha">
+            
+            
+            
+            
+            <!--
+            
+            <input type="password" name="senhaCadastro" ng-model="usuario.senha" placeholder="senha">
+            <input type="password" name="senhaCadastro2" ng-model="usuario.senha" placeholder="confirme sua senha">
 
             <button name="cadastrar" type="button" ng-click="cadastrar()">Cadastrar</button>
-
+            -->
 
 
         </div>
