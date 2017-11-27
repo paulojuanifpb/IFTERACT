@@ -2,14 +2,19 @@
 <html lang="pt" ng-app="app">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>IFTeract</title>
 
     <link rel="stylesheet" href="css/style.css">
-
-    <script src="js/lib/angular.min.js"></script>
-    <script src="js/lib/angular-ui-router.min.js"></script>
-    <script src="js/lib/angular-route.min.js"></script>
-
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/angular-material.min.css">
+    
+    <script src="lib/angular.min.js"></script>
+    <script src="lib/angular-ui-router.min.js"></script>
+    <script src="lib/angular-route.min.js"></script>
+    <script src="lib/bootstrap.min.js"></script>
+    <script src="lib/jquery.min.js"></script>
+    
     <script src="js/app.js"></script>
     <script src="js/controllers/loginController.js"></script>
     <script src="js/service/usuarioService.js"></script>
@@ -21,24 +26,31 @@
 </head>
 <body>
     <div>
-        <div ng-controller="loginCtrl">
+        <div ng-controller="loginCtrl" class="container">
         <center>
-            <div class="loginCadastrar" id="login">
-          <h1>Login</h1>
-          <input type="email" name="email" placeholder="email" ng-model="perfil.email"/>
-          <input type="password" name="senha" placeholder="senha" ng-model="perfil.senha"/>
-            <button type="button" ng-click="logar(perfil)">Login</button>
-        </div>
+            <h1>IFTERACT</h1>
+            <form>
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email">
+              </div>
+              <div class="form-group">
+                <label for="pwd">Senha</label>
+                <input type="password" class="form-control" id="pwd">
+              </div>
+              <button type="submit" class="btn btn-primary">Logar</button>
+            </form>
 
-        <div class="loginCadastrar" id="cadastrar">
+        <div class="form-group" id="cadastrar">
             <h1>Cadastrar</h1>
+            
             <input type="text" class="NomeEmailC" name="nomeCadastro" placeholder="Digite o seu nome" ng-model="usuario.nome"/>
             <input type="email" class="NomeEmailC" name="emailCadastro" placeholder="Digite o seu Email" ng-model="usuario.email"/>
 
             <h3>Genero:</h3>
 
             <h3>Masculino</h3>
-            <input type="radio" name="Genero" value="Masculino" ng-model="usuario.genero">
+            <input type="radio"  name="Genero" value="Masculino" ng-model="usuario.genero">
             
             <h3>Feminino</h3>
             <input type="radio" name="Genero" value="Feminino" ng-model="usuario.genero">
@@ -46,22 +58,19 @@
             <h3>Publico</h3>
             <input type="checkbox" name="Publico" ng-model="usuario.publico">
 
-            <h3 id="profissaoH">Profissao</h3>
-            <input type="text" name="Profissao" ng-model="usuario.profissao" placeholder="Profissao">
+            <br>
+            <h3 id="profissaoH">Profissao:</h3>
+            <input type="text" class="form-control" name="Profissao" ng-model="usuario.profissao" placeholder="Profissao">
             
-            <h2 id="NascimentoC">Nascimento</h2>
-            <input type="date" name="nascimento" ng-model="usuario.nascimento">
+            <h4 id="NascimentoC">Nascimento:</h4>
+            <input type="date" class="form-control" name="nascimento" ng-model="usuario.nascimento">
             
-            
-            
-            
-            <!--
-            
-            <input type="password" name="senhaCadastro" ng-model="usuario.senha" placeholder="senha">
-            <input type="password" name="senhaCadastro2" ng-model="usuario.senha" placeholder="confirme sua senha">
+            <h4>Senha:</h4>
+            <input type="password" class="form-control" name="senhaCadastro" ng-model="usuario.senha" placeholder="senha">
+            <input type="password" class="form-control" name="senhaCadastro2" ng-model="usuario.senha" placeholder="confirme sua senha">
 
             <button name="cadastrar" type="button" ng-click="cadastrar()">Cadastrar</button>
-            -->
+            
 
 
         </div>
