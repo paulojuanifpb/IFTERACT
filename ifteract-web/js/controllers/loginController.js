@@ -2,6 +2,7 @@ app.controller('loginCtrl', function($scope, $state, usuarioService){
 
     $scope.usuario;
     $scope.perfil;
+    $scope.mostrarFormulario = false;
 
     console.log("CHEGOUUU");
 
@@ -29,9 +30,12 @@ app.controller('loginCtrl', function($scope, $state, usuarioService){
         });
         
         return requisicao;
-        //$state.transitionTo("home");
-        //location.reload();
+        $state.go("home");
 
     };
 
+    $scope.mostrarCadastro = function(){
+        console.log("CHEGOU NO MOSTRAR");
+        $scope.mostrarFormulario = !$scope.mostrarFormulario;
+    }
 });
