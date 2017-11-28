@@ -4,21 +4,34 @@
 }
 
 
-#cadastrar{
-    background-color: aqua;
-}
+
 
 #cadastrar input{
     float:left;
     margin-bottom: 0%;
 
-
 }
 
-.NomeEmailC{
-    width: 49%;
+#nomeEmailC input{
+    margin-left: 1%;
+    min-width: 75%;
 }
 
+#senhaPublico h4{
+    margin-left: 1%;
+    margin-right: 1%;
+}
+
+#senhaPublico #checkPublico{
+    margin-left: 1%;
+    width: 25%;
+}
+
+#senhaPublico label{
+    margin-left: 1%;
+    padding-right: 3%;
+    width: 150px;
+}
 #cadastrar h3{
     float: left;
     margin-top:0%;
