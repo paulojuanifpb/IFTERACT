@@ -1,11 +1,11 @@
 import sqlite3
 import datetime
-from ifteractApi.Model import Usuario
-from ifteractApi.Model import Post
-from ifteractApi.Model import Grupo
-from ifteractApi.Model import Mensagem
-from ifteractApi.Model import Notificacao
-from ifteractApi.Model import RedeSocial
+from ifteractApi.Model.Usuario import Usuario, criarTabelaUsuario
+from ifteractApi.Model.Post import Post, criarTabelaPost
+from ifteractApi.Model.Grupo import Grupo, criarTabelaGrupo
+from ifteractApi.Model.Mensagem import Mensagem, criarTabelaMensagem
+from ifteractApi.Model.Notificacao import Notificacao,criarTabelaNotificacao
+from ifteractApi.Model.RedeSocial import RedeSocial
 from ifteractApi.Model import Sistema
 
 
@@ -19,20 +19,25 @@ def cadastrar(conn):
     print('CADASTRANDO USUARIO')
     nome = input('Digite o Nome:\n')
     email = input('Digite o Email:\n')
-    try:
-        dia = int(input('Digite o Dia:\n'))
-        mes = int(input('Digite o Mes:\n'))
-        ano = int(input('Digite o Ano:\n'))
-        nascimento =  datetime.date(ano,mes,dia)
-        profissao = input('Digite a profissao:\n')
+    print("DATA DE NASCIMENTO")
+    while(True):
+        try:
+            dia = int(input('Digite o Dia:\n'))
+            mes = int(input('Digite o Mes:\n'))
+            ano = int(input('Digite o Ano:\n'))
 
-    except ValueError:
-        print("Valor para data inválido")
+            nascimento =  datetime.date(ano,mes,dia)
+            break
+
+        except ValueError:
+         print("Valor para data inválido")
+
+    profissao = input('Digite a profissao:\n')
     genero = input('Digite o Genero:\n')
     publico = False
     senha = input('Digite a Senha:\n')
 
-    usuario = Usuario.Usuario(nome,email,nascimento, profissao, genero, publico, senha)
+    usuario = Usuario(nome,email,nascimento, profissao, genero, publico, senha)
     usuario.inserir(usuario,conn)
     conn.commit()
 
@@ -277,19 +282,23 @@ def main():
                 Sistema.adicionarRede(nome,conn)
 
                 #INSTANCIANDO O OBJETO DA REDE SOCIAL
-                rede = RedeSocial.RedeSocial(nome,datetime.date.today())
+                rede = RedeSocial(nome,datetime.date.today())
 
                 #CRIANDO BANCO DE DADOS DA REDE
                 conn = rede.CriarBanco(nome)
 
                 #CRIANDO ALGUMA TABELAS DA REDE SOCIAL
-                Grupo.criarTabela(conn)
-                Notificação.criarTabela(conn)
-                Mensagem.criarTabela(conn)
-                Post.criarTabela(conn)
-                Usuario.criarTabela(conn)
-                conn.commit()
-                break
+                try:
+                    criarTabelaGrupo(conn)
+                    criarTabelaNotificacao(conn)
+                    criarTabelaMensagem(conn)
+                    criarTabelaPost(conn)
+                    criarTabelaUsuario(conn)
+                    conn.commit()
+                    break
+                except sqlite3.OperationalError :
+                    print("Essa Rede Ja existe:(")
+                    print("Tente entrar com a opção 2")
 
             elif(escolha == 2):
                 nome = input("Digite o Nome da Sua Rede Social:\n")
@@ -307,7 +316,7 @@ def main():
                 break
 
             else:
-                print("OPCAO INVALID")
+                print("OPCAO INVALIDA")
         except ValueError:
             print("Digite um NUMERO que correspond a sua vontade:\n")
 
@@ -343,7 +352,7 @@ def main():
                 publico = usuario[6]
                 senha = usuario[7]
 
-                usuario = Usuario.Usuario(nome, email, nascimento, profissao, genero, publico, senha)
+                usuario = Usuario(nome, email, nascimento, profissao, genero, publico, senha)
                 while(logou and sair == False):
                     try:
 
