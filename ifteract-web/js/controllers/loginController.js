@@ -30,11 +30,11 @@ app.controller('loginCtrl', function($scope, $state, usuarioService){
             console.log("cheguei");
             var dados = response.data;
             console.log(dados);
+            $state.go("home");
         });
         
         return requisicao;
-        //$state.transitionTo("home");
-        //location.reload();
+        
 
     };
 
