@@ -33,19 +33,19 @@
             <form name="LoginForm">
               <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" class="form-control" id="email" ng-required="true">
+                <input type="email" class="form-control" ng-model="perfil.email" id="email" nng-required="true">
               </div>
               <div class="form-group">
                 <label for="pwd">Senha</label>
-                <input type="password" class="form-control" id="pwd" ng-required="true">
+                <input type="password" class="form-control" ng-model="perfil.senha" id="pwd" ng-required="true">
               </div>
              
             </form>
-            <span ng-hide="LoginForm.$invalid">Por favor, preencha o nome e telefone!</span>
-            <button type="submit" class="btn btn-primary" ng-disabled="LoginForm.$valid" ng-click="logar()">Logar</button>
+            <span ng-hide="LoginForm.$valid">Por favor, preencha o nome e telefone!</span>
+            <button type="submit" class="btn btn-primary" ng-disabled="LoginForm.$invalid" ng-click="logar()">Logar</button>
 
         <div class="form-group" id="cadastrar">
-            <form id="CadastroForm">
+            <form name="CadastroForm">
                 <h1>Cadastrar</h1>
                 
                 <div class="form-inline" id="nomeEmailC">
@@ -87,7 +87,7 @@
                     <h4>Senha:</h4>
                     <input type="password" class="form-control" name="senhaCadastro" ng-model="usuario.senha" placeholder="senha" ng-required="true">
                     <h4>Confirme sua Senha</h4>
-                    <input type="password" class="form-control" name="senhaCadastro2" ng-model="usuario.senha" placeholder="confirme sua senha" ng-required="true">
+                    <input type="password" class="form-control" name="senhaCadastro2"  placeholder="confirme sua senha" ng-required="true">
                     
                     <div class="form-check">
                         <label>Tornar Publico</label>
@@ -100,7 +100,7 @@
         </div>
 
         <div>
-            <button name="cadastrar" class="btn btn-primary" type="button" ng-click="cadastrar()" ng-required="CadastroForm.$invalid">Cadastrar</button>
+            <button name="cadastrar" class="btn btn-primary" type="button" ng-click="cadastrar()" ng-disabled="CadastroForm.$invalid" >Cadastrar</button>
         </div>
         </center>
     </div ui-view flex>
