@@ -1,4 +1,5 @@
-import sqlite3
+import mysql.connector
+from database.configDB import config
 import datetime
 from model.Usuario import Usuario, criarTabelaUsuario
 from model.Post import Post, criarTabelaPost
@@ -7,16 +8,19 @@ from model.Mensagem import Mensagem, criarTabelaMensagem
 from model.Notificacao import Notificacao,criarTabelaNotificacao
 from model.RedeSocial import RedeSocial
 from database.RedeSocialDAO import RedeSocialDAO
+from database.UsuarioDAO import UsuarioDAO
 from model import Sistema
 
 
 # CONEXÃO
-conn = sqlite3.connect("NADA")
 
 # criação do cursor
-cursor = conn.cursor()
 # criação das DMLs
-def cadastrar(conn):
+
+'''
+    Cadastrar Usuario
+'''
+def cadastrar():
     print('CADASTRANDO USUARIO')
     nome = input('Digite o Nome:\n')
     email = input('Digite o Email:\n')
@@ -39,8 +43,8 @@ def cadastrar(conn):
     senha = input('Digite a Senha:\n')
 
     usuario = Usuario(nome,email,nascimento, profissao, genero, publico, senha)
-    usuario.inserir(usuario,conn)
-    conn.commit()
+    usuarioDAO =  UsuarioDAO()
+    usuarioDAO.inserir(usuario)
 
 def exibirMenu():
     print('''1-Solicitar Amizade
@@ -63,12 +67,14 @@ def criarRedeSocial():
 
     redeSocial = RedeSocial(nome,descricao)
     redeSocialDAO = RedeSocialDAO()
-    idRedeSocial = redeSocialDAO.inserirRedeSocial()
+    idRedeSocial = redeSocialDAO.inserirRedeSocial(redeSocial)
     return idRedeSocial
 
 #Funcao de Logar
-def logar(conn):
+def logar():
     #Criacao do cursor da conexao(Banco de Dados - SQLite3)
+
+    conn = mysql.connector.connect(**config)
     cursor = conn.cursor()
 
     #Pedindo Dados
@@ -77,18 +83,25 @@ def logar(conn):
 
     #Comando Sql de Consulta(Select
     cursor.execute("""
-        Select * From tb_Usuario where email = ? and senha = ?;
+        Select * From tb_Usuario where email = %s and senha = %s;
     """, (email, senha))
     user = cursor.fetchone()
     print(user)
+
+    cursor.close()
+    conn.close()
 
     if (user == None):
         return (False, "NADA")
     else:
         return (True, user)
 
+
+
 #Funcao de BUscar Notificacoes no BD
-def BuscarNotificacoes(idUser,conn):
+def BuscarNotificacoes(idUser):
+
+    conn = mysql.connector.connect(**config)
 
     #Criacao do cursor pra manipulcao apartir de conn(BD da rede)
     cursor = conn.cursor()
@@ -99,7 +112,7 @@ def BuscarNotificacoes(idUser,conn):
     #Comando Sql de consulta(Select)
     cursor.execute("""
         Select texto,confirmar,emissor,tb_Usuario.email from tb_Notificacao, tb_Usuario
-         where receptor = ? and tb_Usuario.id = tb_Notificacao.emissor ;
+         where receptor = %s and tb_Usuario.id = tb_Notificacao.emissor ;
     """,(idUser,))
 
     #TEsxo a ser reotornado
@@ -112,11 +125,18 @@ def BuscarNotificacoes(idUser,conn):
     if (texto == ""):
         texto = "Não há nenhuma notificacao:"
 
+    cursor.close()
+    conn.close()
     return (contador, texto)
 
 
+'''
+    Buscar Mensagens
+'''
 #Funcao de Buscar todas As Mensagens
-def buscarMensagem(idUser,conn):
+def buscarMensagem(idUser):
+
+    conn = mysql.connector.connect(**config)
 
      #Criacao do cursor pra manipulcao apartir de conn(BD da rede)
     cursor = conn.cursor()
@@ -124,7 +144,7 @@ def buscarMensagem(idUser,conn):
     contador = 0
     cursor.execute("""
         Select texto,emissor,tb_Usuario.email from tb_Mensagem, tb_Usuario
-         where receptor = ? and tb_Usuario.id = tb_Mensagem.emissor;
+         where receptor = %s and tb_Usuario.id = tb_Mensagem.emissor;
     """,(idUser,))
 
     texto = ""
@@ -135,22 +155,32 @@ def buscarMensagem(idUser,conn):
     if (texto == ""):
         texto = "Não há nenhuma mensgem"
 
+
+    cursor.close()
+    conn.close()
+
     return (contador, texto)
 
-def enviarMensagem(usuario,idUsuario, conn):
+"""
+    Enviar Mensagem
+"""
+def enviarMensagem(usuario,idUsuario):
+
+    conn = mysql.connector.connect(**config)
+
     try:
         email = input("Digite o email do outro usuario\n")
 
 
         cursor = conn.cursor()
         cursor.execute("""
-            select id from tb_Usuario where email = ?
+            select id from tb_Usuario where email = %s
         """,(email,))
 
         idR = cursor.fetchone()[0]
 
         cursor.execute("""
-            Select confirmar from tb_Notificacao where emissor = ? and receptor = ?;
+            Select confirmar from tb_Notificacao where emissor = %s and receptor = %s;
         """,(idR, idUsuario))
 
         confirmacao = cursor.fetchone()[0]
@@ -161,38 +191,42 @@ def enviarMensagem(usuario,idUsuario, conn):
 
         else:
             print("Amigo Nao encontrado")
+
+        cursor.close()
+        conn.close()
+
     except TypeError:
         print("Email não encontrado")
 
 
 
 
-
+'''
+    Main - Funcao Principal
+'''
 def main():
 
     sair = False
-    conn = sqlite3.connect("sistema.db")
-    cursor = conn.cursor()
 
     while (True):
 
         logou = False
         while(logou != True and sair == False):
             try:
-                escolha = int(input("Digite o numero correspondente a opção:\n 1-Cadastrar-se\n 2-Logar\n 3-Sair"))
+                escolha = int(input("Digite o numero correspondente a opção:\n 1-Dar um nome para a rede social-se\n 2-Cadastrar \n 3-logar 0-Sair"))
 
                 if(escolha == 1):
                     criarRedeSocial()
 
-                if(escolha == 1):
-                    cadastrar(conn)
+                if(escolha == 2):
+                    cadastrar()
 
-                elif(escolha == 2):
-                    respostas = logar(conn)
+                elif(escolha == 3):
+                    respostas = logar()
                     logou = respostas[0]
 
 
-                elif(escolha == 3):
+                elif(escolha == 0):
                     print("Bye")
                     sair = True
 
@@ -210,53 +244,57 @@ def main():
                     senha = usuario[7]
 
                     usuario = Usuario(nome, email, nascimento, profissao, genero, publico, senha)
+                    usuarioDAO = UsuarioDAO()
                     while(logou and sair == False):
+
                         try:
 
                         #Verificando se a Notificaoes(Solicitacoes)
 
-                            quantidadeNotificacoes = BuscarNotificacoes(idUsuario, conn)[0]
+                            quantidadeNotificacoes = BuscarNotificacoes(idUsuario)[0]
                             if(quantidadeNotificacoes > 0):
                                 print("\n---VocÊ tem %s solicitacoes" %quantidadeNotificacoes)
 
                         #Verificando se a mensagens
 
-                            quantidadeMensagem = buscarMensagem(idUsuario, conn)[0]
-                            if(buscarMensagem(idUsuario, conn)):
+                            quantidadeMensagem = buscarMensagem(idUsuario)[0]
+                            if(buscarMensagem(idUsuario)):
                                 print("\n---VocÊ tem %s Mensagens" %quantidadeMensagem)
 
                         #Selecionando a opcao deseja e verificando a resposta
+
+                            exibirMenu()
                             escolha = int(input("\nDigite o numero correspondente a opção"))
 
                         #Solicitar Amizade
                             if(escolha == 1):
                                 email = input("Digite o email do outro usuario")
-                                usuario.solicitarAmizade(idUsuario, email,conn)
+                                usuarioDAO.solicitarAmizade(idUsuario, email)
 
                         #Enviar Mensagem
                             elif(escolha == 2):
-                                enviarMensagem(usuario,idUsuario,conn)
+                                enviarMensagem(usuario,idUsuario)
 
                         #Listar Usuarios
                             elif(escolha == 3):
-                                usuarios = usuario.listar(conn)
+                                usuarios = usuarioDAO.listar()
 
                                 for usuario in usuarios:
                                     print("Nome: " + usuario.nome + " Email: " + usuario.email)
 
                         #Mostrar Mensagens
                             elif(escolha == 4):
-                                print(buscarMensagem(idUsuario, conn)[1])
+                                print(buscarMensagem(idUsuario)[1])
 
                         #Mostrar Notificacoes
                             elif(escolha == 5):
-                                print(BuscarNotificacoes(idUsuario,conn)[1])
+                                print(BuscarNotificacoes(idUsuario)[1])
 
 
 
                         #Aceitar Solicitacao de Amizade
                             elif(escolha == 6):
-                                usuario.aceitarSolicitacao(idUsuario,conn)
+                                usuarioDAO.aceitarSolicitacao(idUsuario)
 
                         #Sair - LogOut
                             if(escolha == 0):
