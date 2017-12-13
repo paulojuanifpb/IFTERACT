@@ -47,7 +47,8 @@ def cadastrar():
     usuarioDAO.inserir(usuario)
 
 def exibirMenu():
-    print('''1-Solicitar Amizade
+    print('''
+            1-Solicitar Amizade
              2-Enviar Mensagem
              3-Listar Usuarios
              4-Mostrar Mensagens
@@ -213,7 +214,7 @@ def main():
         logou = False
         while(logou != True and sair == False):
             try:
-                escolha = int(input("Digite o numero correspondente a opção:\n 1-Dar um nome para a rede social-se\n 2-Cadastrar \n 3-logar 0-Sair"))
+                escolha = int(input("Digite o numero correspondente a opção:\n 1-Dar um nome para a rede social-se\n 2-Cadastrar \n 3-logar\n 0-Sair"))
 
                 if(escolha == 1):
                     criarRedeSocial()
