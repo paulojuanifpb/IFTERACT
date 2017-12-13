@@ -1,0 +1,79 @@
+<div>
+        <div class="container">
+        <center>
+            <h1>IFTERACT</h1>
+            <form name="LoginForm">
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" ng-model="perfil.email" id="email" nng-required="true">
+              </div>
+              <div class="form-group">
+                <label for="pwd">Senha</label>
+                <input type="password" class="form-control" ng-model="perfil.senha" id="pwd" ng-required="true">
+              </div>
+             
+            </form>
+            <span ng-hide="LoginForm.$valid">Por favor, preencha o nome e telefone!</span>
+            <button type="submit" class="btn btn-primary" ng-disabled="LoginForm.$invalid" ng-click="logar()">Logar</button>
+
+        <div class="form-group" id="cadastrar">
+            <form name="CadastroForm">
+                <h1>Cadastrar</h1>
+                
+                <div class="form-inline" id="nomeEmailC">
+                    <div class="col-sm-6">
+                        <h3>Nome:</h3>
+                        <input type="text" class="form-control" name="nomeCadastro" placeholder="Digite o seu nome" ng-model="usuario.nome" ng-required="true"/>
+                    </div>
+                    <div class="col-sm-6">
+                        <h3>Email:</h3>
+                        <input type="email" class="form-control" name="emailCadastro" placeholder="Digite o seu Email" ng-model="usuario.email" ng-required="true"/>
+                    </div>
+                </div>
+                
+                <div class="form-inline" id="generoProfNasc">
+                    <div class="col-sm-5">
+                        <h3>Genero:</h3>
+                        <br>
+                        <h3>Masculino
+                        <input type="radio"  name="Genero" value="Masculino" ng-model="usuario.genero" ng-required="true">
+                        </h3>
+                        <h3>Feminino
+                        <input type="radio" name="Genero" value="Feminino" ng-model="usuario.genero" ng-required="true">
+                        </h3>
+                    </div>
+                
+                    <div class="col-sm-4">  
+                    <h3>Profissao:</h3>
+                    <input type="text" class="form-control" name="Profissao" ng-model="usuario.profissao" placeholder="Profissao">
+                    </div> 
+                
+
+                    <div class="col-sm-3">
+                        <h3>Nascimento:</h3>
+                        <input type="date" class="form-control" name="nascimento" ng-model="usuario.nascimento" ng-required="true">
+                    </div>
+                </div>
+                <br>
+                <div class="form-inline" id="senhaPublico">
+                    <h4>Senha:</h4>
+                    <input type="password" class="form-control" name="senhaCadastro" ng-model="usuario.senha" placeholder="senha" ng-required="true">
+                    <h4>Confirme sua Senha</h4>
+                    <input type="password" class="form-control" name="senhaCadastro2"  placeholder="confirme sua senha" ng-required="true">
+                    
+                    <div class="form-check">
+                        <label>Tornar Publico</label>
+                        <input type="checkbox" class="form-check-input" name="Publico" ng-model="usuario.publico">
+                        
+                    </div>
+                </div>
+    
+            </form>
+        </div>
+
+        <div>
+            <button name="cadastrar" class="btn btn-primary" type="button" ng-click="cadastrar()" ng-disabled="CadastroForm.$invalid" >Cadastrar</button>
+        </div>
+        </center>
+    </div>
+</div>
