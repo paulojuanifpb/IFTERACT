@@ -259,7 +259,7 @@ def main():
                         #Verificando se a mensagens
 
                             quantidadeMensagem = buscarMensagem(idUsuario)[0]
-                            if(buscarMensagem(idUsuario)):
+                            if(quantidadeMensagem):
                                 print("\n---VocÊ tem %s Mensagens" %quantidadeMensagem)
 
                         #Selecionando a opcao deseja e verificando a resposta
