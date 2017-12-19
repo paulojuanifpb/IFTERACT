@@ -23,6 +23,7 @@ CREATE TABLE ifteractdb.tb_Notificacao(
             id INTEGER NOT NULL PRIMARY KEY auto_increment,
             texto VARCHAR(100),
             confirmar boolean default false,
+            data date,
             visualizado boolean default false,
             emissor int not null,
             receptor int not null,

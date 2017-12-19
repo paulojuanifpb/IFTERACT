@@ -31,7 +31,7 @@ class Usuario():
         self.senha = senha
 
     def __str__(self):
-        return self.nome + "  " + self.email
+        return "< Nome: "+ self.nome + " Email: " + self.email + " >"
 
 def listarUsuarios(conn):
 

@@ -1,4 +1,7 @@
 import sqlite3
+import datetime
+from model.Usuario import Usuario
+from database.UsuarioDAO import UsuarioDAO
 
 # CONEXÃO
 conn = sqlite3.connect(' NADA.db ')
@@ -27,7 +30,7 @@ def criarTabelaNotificacao(conn):
 
 
 class Notificacao():
-    def __init__(self, texto, data, confirmar, vizualizado, emissor, receptor):
+    def __init__(self, texto, vizualizado, emissor, receptor, data=datetime.datetime.today(), confirmar = False):
         self.texto = texto
         self.data = data
         self.confirmar =confirmar
@@ -83,5 +86,8 @@ class Notificacao():
              delete from tb_Notificacao
              where id = ?
              """,(id,))
+
+    def __str__(self):
+        return self.texto + " de: " + str(self.emissor) + " para: " + str(self.receptor) + "Confirmada: " + str(self.confirmar)
 
 

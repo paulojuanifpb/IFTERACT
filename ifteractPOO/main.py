@@ -7,8 +7,11 @@ from model.Grupo import Grupo, criarTabelaGrupo
 from model.Mensagem import Mensagem, criarTabelaMensagem
 from model.Notificacao import Notificacao,criarTabelaNotificacao
 from model.RedeSocial import RedeSocial
+from database.TabelasDAO import criarTabelas
 from database.RedeSocialDAO import RedeSocialDAO
 from database.UsuarioDAO import UsuarioDAO
+from database.NotificacaoDAO import NotificacaoDAO
+
 from model import Sistema
 
 
@@ -17,36 +20,137 @@ from model import Sistema
 # criação do cursor
 # criação das DMLs
 
+def exibirMenuHome(usuario):
+
+    print('''
+                    %s
+            ==      HOME        ==
+             1-Solicitar Amizade
+             2-Enviar Mensagem
+             3-Listar Usuarios
+             4-Mostrar Mensagens
+             5-notificacoes
+             6-aceitar Solicitacao
+             7-Desfazer Amizade
+             0-Sair"
+
+          ''' %usuario.nome)
+
+
+def exibirMenuInicio():
+
+
+    redesocialDAO = RedeSocialDAO()
+    retornoSetRede = redesocialDAO.listar()
+    idRedeSocial = retornoSetRede[0]
+    redeSocial = retornoSetRede[1]
+
+    if(idRedeSocial == 0):
+
+        print('''
+            
+            SEJA BEM VINDO A REDE SOCIAL               
+                                                       
+            1-Dar nome a Rede                               
+            2-Cadastrar                                  
+            3-Logar                                        
+            0-Sair                                            
+                                                                        
+                                                            
+        ''')
+
+    else:
+        print('''
+
+            SEJA BEM VINDO A %s  
+                
+            1-Dar nome a Rede                               
+            2-Cadastrar                                  
+            3-Logar                                        
+            0-Sair                                            
+
+
+                ''' %redeSocial.nome)
+
+
+
+
 '''
     Cadastrar Usuario
 '''
 def cadastrar():
+    #Iniciando Cadastro
     print('CADASTRANDO USUARIO')
+    print("CASO QUEIRA Cancelar o Cadastro a Qualquer momento digite %&AA")
+
     nome = input('Digite o Nome:\n')
+
+    #Verificando se é desejado cancelar Cadastro
+    if (nome == "%&AA"):
+        return "Cadastro Cancelado"
+
     email = input('Digite o Email:\n')
-    print("DATA DE NASCIMENTO")
+    if (email == "%&AA"):
+        return "Cadastro Cancelado"
+
+
     while(True):
         try:
-            dia = int(input('Digite o Dia:\n'))
+            print("DATA DE NASCIMENTO")
+
+            #DIA
+            dia = int(input('\nDigite o Dia:\n'))
+            # Verificando se é desejado cancelar Cadastro
+            if (dia < 0):
+                return "Cadastro Cancelado"
+
+            #MES
             mes = int(input('Digite o Mes:\n'))
+            # Verificando se é desejado cancelar Cadastro
+            if (mes < 0):
+                return "Cadastro Cancelado"
+
+            #ANO
             ano = int(input('Digite o Ano:\n'))
+            # Verificando se é desejado cancelar Cadastro
+            if (ano < 0):
+                return "Cadastro Cancelado"
 
             nascimento =  datetime.date(ano,mes,dia)
+
+
             break
 
         except ValueError:
          print("Valor para data inválido")
 
+    #PROFISSAO
     profissao = input('Digite a profissao:\n')
+    # Verificando se é desejado cancelar Cadastro
+    if (nome == "%&AA"):
+        return "Cadastro Cancelado"
+
+    #GENERO
     genero = input('Digite o Genero:\n')
+    # Verificando se é desejado cancelar Cadastro
+    if (nome == "%&AA"):
+        return "Cadastro Cancelado"
     publico = False
+
+    #SENHA
     senha = input('Digite a Senha:\n')
+    # Verificando se é desejado cancelar Cadastro
+    if (nome == "%&AA"):
+        return "Cadastro Cancelado"
 
     usuario = Usuario(nome,email,nascimento, profissao, genero, publico, senha)
     usuarioDAO =  UsuarioDAO()
     usuarioDAO.inserir(usuario)
+    print("CADASTRO REALIZADO COM SUCESSO")
 
 def exibirMenu():
+
+
     print('''
             1-Solicitar Amizade
              2-Enviar Mensagem
@@ -55,8 +159,9 @@ def exibirMenu():
              5-notificacoes
              6-aceitar Solicitacao
              0-Sair"
-
-          ''')
+             
+             '''
+          )
 
 '''
     Criação da Rede Social
@@ -165,40 +270,42 @@ def buscarMensagem(idUser):
 """
     Enviar Mensagem
 """
-def enviarMensagem(usuario,idUsuario):
-
-    conn = mysql.connector.connect(**config)
-
-    try:
-        email = input("Digite o email do outro usuario\n")
 
 
-        cursor = conn.cursor()
-        cursor.execute("""
-            select id from tb_Usuario where email = %s
-        """,(email,))
 
-        idR = cursor.fetchone()[0]
+def quadroAvisos(notificacaoDAO, idUsuario):
 
-        cursor.execute("""
-            Select confirmar from tb_Notificacao where emissor = %s and receptor = %s;
-        """,(idR, idUsuario))
+    notificacoes = notificacaoDAO.listar(idUsuario)
+    notificacoesEnviadas = notificacoes[0]
+    notificacoesRecebidas = notificacoes[1]
 
-        confirmacao = cursor.fetchone()[0]
 
-        if (confirmacao == "true"):
-            texto = input("Digite a sua mensagem\n")
-            usuario.enviarMensagem(texto,idUsuario, idR, conn)
 
-        else:
-            print("Amigo Nao encontrado")
+    quantidadeEnviadas = len(notificacoesEnviadas)
+    for notificacaoE in notificacoesEnviadas[quantidadeEnviadas - 3:]:
+        print("""
+                        Ultimas Notificacoes Enviadas
+        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    
+        %s
+        
+        
+        <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        
+        """ %notificacaoE)
 
-        cursor.close()
-        conn.close()
+    for notificacaoR in notificacoesRecebidas:
+        if(notificacaoR.vizualizado == False):
+            print("""
+                                    Notificacoes Recebidas
+                    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-    except TypeError:
-        print("Email não encontrado")
+                    %s
 
+
+                    <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+                    """ %notificacaoR)
 
 
 
@@ -208,19 +315,22 @@ def enviarMensagem(usuario,idUsuario):
 def main():
 
     sair = False
+    criarTabelas()
 
     while (True):
 
         logou = False
         while(logou != True and sair == False):
             try:
-                escolha = int(input("Digite o numero correspondente a opção:\n 1-Dar um nome para a rede social-se\n 2-Cadastrar \n 3-logar\n 0-Sair"))
+
+                exibirMenuInicio()
+                escolha = int(input("Digite o numero correspondente a opção"))
 
                 if(escolha == 1):
                     criarRedeSocial()
 
                 if(escolha == 2):
-                    cadastrar()
+                    print(cadastrar())
 
                 elif(escolha == 3):
                     respostas = logar()
@@ -232,8 +342,14 @@ def main():
                     sair = True
 
 
+                '''
+                    home
+                '''
                 if(logou):
-                    print("!--HOME--!")
+
+                    """
+                        Criando OBJETO USUARIO E DAO
+                    """
                     usuario = respostas[1]
                     idUsuario = usuario[0]
                     nome = usuario[1]
@@ -246,42 +362,34 @@ def main():
 
                     usuario = Usuario(nome, email, nascimento, profissao, genero, publico, senha)
                     usuarioDAO = UsuarioDAO()
+                    notificacaoDAO =NotificacaoDAO()
+
                     while(logou and sair == False):
 
                         try:
-
-                        #Verificando se a Notificaoes(Solicitacoes)
-
-                            quantidadeNotificacoes = BuscarNotificacoes(idUsuario)[0]
-                            if(quantidadeNotificacoes > 0):
-                                print("\n---VocÊ tem %s solicitacoes" %quantidadeNotificacoes)
-
-                        #Verificando se a mensagens
-
-                            quantidadeMensagem = buscarMensagem(idUsuario)[0]
-                            if(quantidadeMensagem):
-                                print("\n---VocÊ tem %s Mensagens" %quantidadeMensagem)
+                            quadroAvisos(notificacaoDAO,idUsuario)
 
                         #Selecionando a opcao deseja e verificando a resposta
 
-                            exibirMenu()
-                            escolha = int(input("\nDigite o numero correspondente a opção"))
+                            exibirMenuHome(usuario)
+                            escolha = int(input("\nDigite o numero correspondente a opção:"))
 
                         #Solicitar Amizade
                             if(escolha == 1):
-                                email = input("Digite o email do outro usuario")
+                                email = input("Digite o email do outro usuario:")
                                 usuarioDAO.solicitarAmizade(idUsuario, email)
 
                         #Enviar Mensagem
                             elif(escolha == 2):
-                                enviarMensagem(usuario,idUsuario)
+                                email = input("Digite o email do outro usuario:")
+                                usuarioDAO.enviarMensagem(usuario,idUsuario,email)
 
                         #Listar Usuarios
                             elif(escolha == 3):
                                 usuarios = usuarioDAO.listar()
 
-                                for usuario in usuarios:
-                                    print("Nome: " + usuario.nome + " Email: " + usuario.email)
+                                for user in usuarios:
+                                    print("Nome: " + user.nome + " Email: " + user.email)
 
                         #Mostrar Mensagens
                             elif(escolha == 4):
@@ -296,6 +404,10 @@ def main():
                         #Aceitar Solicitacao de Amizade
                             elif(escolha == 6):
                                 usuarioDAO.aceitarSolicitacao(idUsuario)
+
+                        #Desfazer Amizade
+                            elif(escolha == 7):
+                                usuarioDAO.desfazerAmizade(idUsuario)
 
                         #Sair - LogOut
                             if(escolha == 0):
