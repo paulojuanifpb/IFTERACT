@@ -3,6 +3,7 @@ app.controller('loginCtrl', function($scope, $state, usuarioService){
     $scope.usuario;
     $scope.perfil;
     $scope.mostrarFormulario = false;
+    $scope.senhaConfirmacao;
 
     console.log("CHEGOUUU");
 
@@ -13,9 +14,18 @@ app.controller('loginCtrl', function($scope, $state, usuarioService){
         if(!user.publico){
             user.publico = false;
         }
+        console.log($scope.senhaConfirmacao);
+        console.log(user.senha);
+        
+        if($scope.senhaConfirmacao == user.senha){
         usuarioService.cadastrar(user);
         console.log("Deu certo");
         console.log(user);
+        }
+        else{
+            console.log("Senha errada");
+            alert("As senhas estao diferentes");
+        }
 
 
     };
